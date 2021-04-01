@@ -1,0 +1,31 @@
+---
+title: "Playing with ESS data"
+author: "Olivier Bergeron-Boutin"
+date: "March 27th, 2021"
+output:
+  tint::tintPdf:
+    latex_engine: xelatex
+  tufte::tufte_html: 
+    citation_package: natbib
+    tufte_features: ["fonts", "background"]
+link-citations: yes
+bibliography: bib.bib
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+# Data and packages
+```{r}
+# Packages
+library(pacman)
+pacman::p_load(tidyverse,
+               haven,
+               ggplot2)
+# Cumulative ESS data (waves 1-9)
+
+
+```
+
