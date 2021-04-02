@@ -1,5 +1,5 @@
 ---
-title: "Playing with ESS data"
+title: "Youth and democracy"
 author: "Olivier Bergeron-Boutin"
 date: "March 27th, 2021"
 output:
@@ -9,23 +9,94 @@ output:
     citation_package: natbib
     tufte_features: ["fonts", "background"]
 link-citations: yes
-bibliography: bib.bib
+bibliography: youth.bib
 biblio-style: apalike
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
-# Data and packages
 ```{r}
 # Packages
 library(pacman)
 pacman::p_load(tidyverse,
                haven,
-               ggplot2)
-# Cumulative ESS data (waves 1-9)
+               ggplot2,
+               extrafont,
+               DescTools,
+               knitr)
 
+# Cleaned cumulative ESS data + wave 6
+load("cleaned_data/ess_clean.RData")
 
+# Cleaned EVS wave 5 data
+load("cleaned_data/evs_w5.RData")
+
+# Function for CIs
+source("functions/confint.R")
 ```
+
+The extant literature has not consistently settled on the same survey items to measure support for democracy. A major outstanding issue is thus the question of measurement -- which items best capture support for democracy? 
+
+```{r}
+# Correlation matrix
+corrm <- evs5 %>% 
+  select(sys1_strongleader:sys3_democracy) %>% 
+  rename(`Strong leader` = sys1_strongleader,
+         `Army rule` = sys2_army,
+         `Democracy` = sys3_democracy) %>% 
+  cor() %>% 
+  round(3)
+  kable(corrm, caption = "Correlation matrix between 3 items measuring regime support")
+```
+
+
+```{r,fig.height=6,fig.width=8,fig.cap="Mean satisfaction with democracy by age, ESS combined waves 1-9. Age-specific scores are computed using a weighted mean with post-stratification weights; loess curve is weighted by sample size."}
+# Mean satisfaction by age (with loess)
+ess_cum %>% 
+  filter(age >= 15 & age <= 90) %>% 
+  filter(dem_satisfied < 11) %>% 
+  group_by(age) %>% 
+  summarise(mean_satisfied = weighted.mean(dem_satisfied, 
+                                           na.rm = T,
+                                           w = pspwght),
+            lwr = lwr_conf(dem_satisfied),
+            upr = upr_conf(dem_satisfied),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = age, y = mean_satisfied, weight = `Sample size`)) +
+  geom_point(aes(size = `Sample size`), alpha = 0.2) +
+  geom_smooth(se = FALSE) +
+  labs(x = "Age",
+       y = "Satisfaction with democracy (0-10)") +
+  scale_x_continuous(breaks = seq(15, 90, 5)) +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 14) +
+  guides(size = FALSE)
+```
+
+```{r,fig.height=6,fig.width=8,fig.cap="Mean importance of democracy by age, ESS wave 6 only (2012). Age-specific scores are computed using a weighted mean with post-stratification weights; loess curve is weighted by sample size."}
+# Mean importance by age (with loess)
+ess6 %>% 
+  filter(age >= 15 & age <= 90) %>% 
+  group_by(age) %>% 
+  summarise(mean_important = weighted.mean(dem_important, 
+                                           na.rm = T,
+                                           w = pspwght),
+            lwr = lwr_conf(dem_important),
+            upr = upr_conf(dem_important),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = age, y = mean_important, weight = `Sample size`)) +
+  geom_point(aes(size = `Sample size`), alpha = 0.2) +
+  geom_smooth(se = FALSE) +
+  labs(x = "Age",
+       y = "Importance of democracy (0-10)") +
+  scale_x_continuous(breaks = seq(15, 90, 5)) +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 14) +
+  guides(size = FALSE)
+```
+
+
 
