@@ -1,0 +1,300 @@
+---
+title: "Are Younger Generations More Acceptant of Democratic Backsliding?" 
+subtitle: "Experimental Evidence from Canada and the United States"
+author: "Olivier Bergeron-Boutin"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  tint::tintPdf:
+    latex_engine: xelatex
+  tufte::tufte_html: 
+    citation_package: natbib
+    tufte_features: ["fonts", "background"]
+classoption: justified
+link-citations: yes
+bibliography: youth.bib
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file()#,
+                     #kable.force.latex = TRUE
+)
+# kable.force.latex is to make knitr::kable caption appear in the sidenotes. 
+```
+
+```{r}
+# Packages
+library(pacman)
+pacman::p_load(tidyverse,
+               haven,
+               ggplot2,
+               extrafont,
+               DescTools,
+               knitr,
+               viridis,
+               cregg)
+
+# Cleaned cumulative ESS data + wave 6
+load("cleaned_data/ess_clean.RData")
+
+# Cleaned EVS wave 5 data
+load("cleaned_data/evs_w5.RData")
+
+# Survey data (2020) from both Canada and US 
+load("cleaned_data/survey_2020_pooled.RData")
+
+# Conjoint data (2020) from both Canada and US 
+load("cleaned_data/conjoint_2020_pooled.RData")
+
+# Loading function that produces scenario results
+source("2020 surveys/functions/conjoint_scenario.R")
+
+# Function for CIs
+source("functions/confint.R")
+
+# Formulas for conjoint
+f1 <- selected ~ Gender + Age + `Political experience` + Party + `Economic aid policy`+ 
+  `Lockdown policy` + `Legislative checks` 
+f2 <- selected ~ Gender + Age + `Political experience` + Party + `Economic aid policy`+ 
+  `Lockdown policy` + `Judicial checks` 
+
+# Custom color scale for results by generation
+gen_cols <- c(viridis(6)[1:5], "#D53992")
+```
+
+The scholarly study of democratic erosion  has long been reserved to those regimes that were considered most vulnerable -- the fledgling democracies whose institutions were weakly entrenched and whose peoples had not yet internalized the norms of popular government. In the past five years, however, the resilience of consolidated democracies has come under scrutiny [@levitsky_how_2018;@kaufman_democratic_2019]. In particular, Foa and Mounk's [-@foa_danger_2016] claim that younger generations are less attached to democracy and more open to authoritarian alternatives has attracted much attention.^[This generational pattern is especially worrying if it is due to cohort effects, as opposed to life-cycle effects.]  Indeed, there is a burgeoning literature examining generational patterns of support for democracy in Europe and North America. 
+Although it is noteworthy that most scholars strike a noticeably less pessimistic tone than Foa and Mounk [see e.g. @zilinsky_democratic_2019;@wuttke_have_2021], no single conclusion can claim universal support and the issue of youth support for democracy is still very much a contentious area of research. This research project aims to contribute to this literature by using original data from four surveys fielded in the United States and Canada in both 2019 and 2020. By using a combination of conjoint experiments and traditional vignette experiments, our aim is to provide a new look into an important question: are younger generations more acceptant of democratic backsliding? I begin with a short review of the key findings in this literature. 
+
+# The literature so far
+
+The ongoing controversy over youth's commitment to democracy can be traced back to Foa and Mounk's [-@foa_danger_2016;-@foa_signs_2017;-@foa_end_2017] series of influential articles in the \textit{Journal of Democracy}. Using data from the World Values Survey, Foa and Mounk build an argument against the so-called "consolidation paradigm" -- a scholarly approach that, they argue, is blind to the potential for deconsolidation among even the most advanced democracies. Foa and Mounk diagnose an instability to democratic regimes that have long been thought to be stable and unlikely to break down. Strikingly, it is among the youngest citizens that they find the most troubling attitudes: lesser agreement that it is important to live in a democracy and greater openness to authoritarian alternatives. 
+
+Foa and Mounk's original articles spurred a scholarly debate that is still ongoing. Their provocative claim have attracted so much attention that the \textit{Journal of Democracy} published a special online issue dedicated to a discussion of their findings. In this special issue, scholars critiqued Foa and Mounk's unorthodox coding scheme [@voeten_are_2017], their overemphasis of relatively small substantive differences [@norris_is_2017], and their neglect of potential differences in younger generations' understanding of democracy [@alexander_myth_2017]. In a more recent article, Wuttke et al. [-@wuttke_have_2021] use generalized additive models to tease apart the age, cohort, and period effects that may explain generational differences in support for democracy; they find no indication that the youngest cohorts are distinctive in this regard. 
+
+# Measuring support for democracy 
+
+Despite contradictory results, the extant literature shares a reliance on survey questions that directly query respondents about their attitudes toward various political regimes. Such questions are widely used in cross-country, nationally representative surveys, which facilitates comparative analyses of attitudinal democratic backsliding. However, there is reason to doubt that they are effective at measuring the latent construct of support for democracy. I highlight three reasons why this is.^[I do not discuss this for the purposes of this proposal, but there is also Zaller's "top-of-the-head" theory of the survey response that would call into question how meaningful the nominal measure of support for democracy are.] 
+
+First, although a handful of survey items are frequently used to measure support for democratic rule, \textit{which} of these popular items best measures the underlying concept remains unclear -- with important consequences on the conclusions that can be drawn. Notably, four survey items that are regularly used in studies of democratic backsliding are only weakly correlated (see Table 1).^[Three items ask whether the following types of political systems are good ways of governing the respondent's country: "Having a strong leader who does not have to bother with parliament and elections", "Having the army rule the country", and "Having a democratic political system". The fourth item asks participants to rate the importance of living in a democratic country on a scale from 1 to 10.] Thus, there is only a tenuous link between different survey instruments that have been used interchangeably as dependent variables in the literature. Which of these four items -- if any -- best captures regime support is unclear, but what \textit{is} clear is that basic issues of measurement have not been given sufficient attention. Furthermore, by producing age-specific correlations between the "democracy as a good way of governing the country" item and the three others, one can observe a weakening correlation among the younger cohorts (see Figure 1). 
+
+```{r}
+# Correlation matrix
+bruh <- evs5 %>% 
+  select(sys1_strongleader:sys3_democracy, dem_important) %>% 
+  rename(`Strong leader` = sys1_strongleader,
+         `Army rule` = sys2_army,
+         `Democracy (good way)` = sys3_democracy,
+         `Importance of democracy` = dem_important) %>% 
+  cor(use = "complete.obs") %>% 
+  round(3) 
+  knitr::kable(bruh,
+        caption = 'Correlation matrix between 3 items measuring regime support. Data from Wave 5 of the European Values Survey.')
+```
+
+```{r,fig.height=6,fig.width=10,fig.cap="Correlations between support for democracy as a good way of governing and: a) support for strong leader, b) support for army rule, and c) rating of importance in living in a democracy, by birth year. Data from Wave 5 of the European Values Survey. Point size represents sample size; data restricted to respondents born between 1945 and 2000."}
+
+#----------------
+evs5 %>% 
+  filter(birth_year >= 1945 & birth_year <= 2000) %>% 
+  group_by(birth_year) %>% 
+  summarise(`Strong leader` = 
+              cor(sys1_strongleader, sys3_democracy,
+                  use = "complete.obs"),
+            `Army rule` = 
+              cor(sys2_army, sys3_democracy,
+                  use = "complete.obs"),
+            `Democracy (importance)` = 
+              cor(dem_important, sys3_democracy,
+                  use = "complete.obs"),
+            n = n()) %>% 
+  pivot_longer(cols = c(`Strong leader`, 
+                        `Army rule`,
+                        `Democracy (importance)`),
+               names_to = "Variables") %>% 
+  ggplot(aes(x = birth_year, y = value, size = n, weight = n, col = Variables)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(se = FALSE) +
+  labs(x = "Birth year",
+       y = "Correlations between items") +
+  scale_x_continuous(breaks = seq(1945, 2000, 5)) +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 18) %+replace%
+  theme(legend.position = "bottom") +
+  guides(size = FALSE)
+```
+
+Second, social desirability bias may produce a misleadingly optimistic picture of support for democracy. As social scientists have developed new methodological approaches in order to get around the problem of untruthfulness^[Perhaps most notably, list experiments have been used as a statistical "truth serum", see @glynn_what_2013 and @lyall_explaining_2013], research on support for democracy has mostly stuck with the same direct questions that may or may not elicit honest answers. Although problematic in its own right, this issue of sensitive survey questions may spell further trouble if the pressure to deliver the socially acceptable answer differs from generation to generation. 
+
+Third, expressing support for democracy in a survey is essentially costless. In fulfilling their democratic duties, citizens are never presented with a simple up-or-down vote on the continuation of democratic government. Instead, the respect of democratic norms is one of many considerations that must compete with, among others, ideology and partisanship. What matters most is not answers to abstract survey questions, but how citizens behave when they are asked to make trade-offs between policy preferences, partisan loyalty, and respect for democracy. If older generations hold intense preferences for certain policies or are less willing to cross party lines, the generational differences identified by the nominal measures may disappear. Real-world choices often involve a choice between an ideologically-proximate, but undemocratic candidate and an ideologically-distant who is respectful of democratic norms. Evaluating how citizens make these trade-offs is at the heart of the issue of democratic resilience; standard survey questions cannot provide any information about these trade-offs. As a result, these familiar items about regime types may identify as small-d democrats those respondents who defend democracy "in the abstract" but whose support crumbles due to the smallest inconvenience [@schedler_democrats_2007]. 
+
+# Contribution: new experimental evidence 
+Given these limitations, this research project aims to provide new evidence on youth and democracy by drawing on "behavioral" measures from survey experiments. 
+
+The first type of evidence that we present comes from conjoint experiments embedded in nationally representative surveys in Canada and the United States fielded in mid-2020. Preliminary results are presented in Figures 2 and 3, which show vote for an anti-democratic candidate for office under different scenarios of agreement or disagreement with the respondent on lockdown policy and party. These preliminary findings show little evidence of a generational pattern in voting for undemocratic candidates. Future steps include comparisons of average marginal component effects across generations. For the purposes of statistical power, we may also collapse some of the generational cohorts in order to arrive at more precise estimates. The data for the congruence scenarios are particularly sparse given that the conjoint experiment was not set up with this specific analysis in mind.
+
+```{r,fig.height=8,fig.width=7,fig.cap="Proportion of respondents voting for the undemocratic candidate in the conjoint experiment, according to different scenarios of agreement on lockdown measures. Data from the legislature condition, 2020 coronavirus survey."}
+
+### By generation----
+# Only taking the two most extreme scenarios
+leg_lockdown_gen <- conjoint_scenario(conjoint_legislature_pooled,
+                                      condition = "legislature",
+                                      defect_cause = "lockdown",
+                                      by = "generation") %>% 
+  filter(scenario %in% c("Only D+ candidate", "Only D- candidate"))
+
+
+ggplot(leg_lockdown_gen,
+       aes(x = scenario, y = mean, ymin = lwr, ymax = upr, col = by)) +
+  geom_point(position = position_dodge(0.5)) +
+  geom_pointrange(position = position_dodge(0.5)) +
+  theme_minimal(base_family = "Fira Sans") +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  scale_color_manual(name = "Generation",
+                     values = gen_cols) +
+  scale_y_continuous(breaks = seq(0.2, 0.8, 0.1)) +
+  labs(y = "Proportion voting for D- candidate",
+       x = "Respondent agrees with lockdown position of...") +
+  facet_wrap(~Country)
+```
+
+The second type of evidence that we bring to bear are results from scenarios that ask respondents about concrete anti-democratic actions from incumbents that they must condone or denounce. By doing away with the more abstract formulations of the survey questions examined above, we hope to elicit more meaningful answers from respondents. 
+
+```{r,fig.height=8,fig.width=7,fig.cap="Proportion of respondents voting for the undemocratic candidate in the conjoint experiment, according to different scenarios of party congruence between the respondent and the hypothetical candidates. Data from the legislature condition, 2020 coronavirus survey."}
+### By generation----
+# Only the two most extreme scenarios (only D- and only D+) for simplicity
+leg_party_gen <- 
+  conjoint_legislature_pooled %>% 
+  # recoding so that NDP respondents are matched to NDP profiles/candidates
+  mutate(partyid = recode(partyid, "New Democrat" = "NDP")) %>% 
+  filter(partyid %in% levels(conjoint_legislature_pooled$Party)) %>% 
+  conjoint_scenario(condition = "legislature", 
+                    defect_cause = "party",
+                    by = "generation") %>% 
+  filter(scenario %in% c("Only D+ candidate", "Only D- candidate"))
+
+ggplot(leg_party_gen,
+       aes(x = scenario, y = mean, ymin = lwr, ymax = upr, col = by)) +
+  geom_point(position = position_dodge(0.5)) +
+  geom_pointrange(position = position_dodge(0.5)) +
+  theme_minimal(base_family = "Fira Sans") +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  labs(y = "Proportion voting for D- candidate",
+       x = "Respondent from same party as of...") +
+  scale_color_manual(values = gen_cols) +
+  scale_y_continuous(breaks = seq(0.1, 0.8, 0.1)) +
+  facet_wrap(~Country)
+```
+
+\newpage
+
+# Appendix: some interesting figures 
+
+```{r,fig.height=6,fig.width=8,fig.cap="Mean satisfaction with democracy by age, ESS combined waves 1-9. Age-specific scores are computed using a weighted mean with post-stratification weights; loess curve is weighted by sample size."}
+# Mean satisfaction by age (with loess)
+ess_cum %>% 
+  filter(age >= 15 & age <= 90) %>% 
+  filter(dem_satisfied < 11) %>% 
+  group_by(age) %>% 
+  summarise(mean_satisfied = weighted.mean(dem_satisfied, 
+                                           na.rm = T,
+                                           w = pspwght),
+            lwr = lwr_conf(dem_satisfied),
+            upr = upr_conf(dem_satisfied),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = age, y = mean_satisfied, weight = `Sample size`)) +
+  geom_point(aes(size = `Sample size`), alpha = 0.2) +
+  geom_smooth(se = FALSE) +
+  labs(x = "Age",
+       y = "Satisfaction with democracy (0-10)") +
+  scale_x_continuous(breaks = seq(15, 90, 5)) +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 14) +
+  guides(size = FALSE)
+```
+
+```{r,fig.height=6,fig.width=8,fig.cap="Mean importance of democracy by age, ESS wave 6 only (2012). Age-specific scores are computed using a weighted mean with post-stratification weights; loess curve is weighted by sample size."}
+# Mean importance by age (with loess)
+ess6 %>% 
+  filter(age >= 15 & age <= 90) %>% 
+  group_by(age) %>% 
+  summarise(mean_important = weighted.mean(dem_important, 
+                                           na.rm = T,
+                                           w = pspwght),
+            lwr = lwr_conf(dem_important),
+            upr = upr_conf(dem_important),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = age, y = mean_important, weight = `Sample size`)) +
+  geom_point(aes(size = `Sample size`), alpha = 0.2) +
+  geom_smooth(se = FALSE) +
+  labs(x = "Age",
+       y = "Importance of democracy (0-10)") +
+  scale_x_continuous(breaks = seq(15, 90, 5)) +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 14) +
+  guides(size = FALSE)
+```
+
+
+```{r,fig.height=6,fig.width=8,fig.cap="AMCEs for the undemocratic attribute relating to ignoring courts by generation, country, and stated preference for democracy. Data from our 2020 surveys in Canada and the United States (courts condition)."}
+# Collapsing generations together for this analysis 
+conjoint_courts_pooled %>% 
+  filter(!is.na(democracy_preferable)) %>% 
+  mutate(gen_collapse = case_when(
+    generation %in% c("Pre-1950s", "1950s") ~ "Pre-1960s",
+    generation %in% c("1960s", "1970s") ~ "1960s-70s",
+    generation %in% c("1980s", "Post-1980s") ~ "1980s and younger"
+    )) %>% 
+  mutate(gen_preferable_country = paste(
+    gen_collapse, democracy_preferable, Country, sep = "_"
+    )) %>% 
+  cj(formula = f2,
+     id = ~id,
+     by = ~gen_preferable_country) %>% 
+  filter(level == "Ignore courts") %>% 
+  mutate(generation = str_split(BY, "_") %>% lapply("[", 1) %>% unlist() %>% 
+           factor(levels = c("Pre-1960s", "1960s-70s", "1980s and younger")),
+         democracy_preferable = str_split(BY, "_") %>% lapply("[", 2) %>% unlist(),
+         Country = str_split(BY, "_") %>% lapply("[", 3) %>% unlist()) %>% 
+  ggplot(aes(x = democracy_preferable, y = estimate, ymin = lower, 
+             ymax = upper, col = generation)) +
+  geom_point(position = position_dodge(0.5)) +
+  geom_pointrange(position = position_dodge(0.5)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_color_manual(values = gen_cols) +
+  facet_wrap(~Country) +
+  theme_bw(base_family = "Fira Sans")
+```
+
+```{r,fig.height=6,fig.width=8,fig.cap="AMCEs for the undemocratic attribute relating to shutting down the legislature by generation, country, and stated preference for democracy. Data from our 2020 surveys in Canada and the United States (legislature condition)."}
+
+# Collapsing generations together for this analysis 
+conjoint_legislature_pooled %>% 
+  filter(!is.na(democracy_preferable)) %>% 
+  mutate(gen_collapse = case_when(
+    generation %in% c("Pre-1950s", "1950s") ~ "Pre-1960s",
+    generation %in% c("1960s", "1970s") ~ "1960s-70s",
+    generation %in% c("1980s", "Post-1980s") ~ "1980s and younger"
+    )) %>% 
+  mutate(gen_preferable_country = paste(
+    gen_collapse, democracy_preferable, Country, sep = "_"
+    )) %>% 
+  cj(formula = f1,
+     id = ~id,
+     by = ~gen_preferable_country) %>% 
+  filter(level == "Shut down legislature") %>% 
+  mutate(generation = str_split(BY, "_") %>% lapply("[", 1) %>% unlist() %>% 
+           factor(levels = c("Pre-1960s", "1960s-70s", "1980s and younger")),
+         democracy_preferable = str_split(BY, "_") %>% lapply("[", 2) %>% unlist(),
+         Country = str_split(BY, "_") %>% lapply("[", 3) %>% unlist()) %>% 
+  ggplot(aes(x = democracy_preferable, y = estimate, ymin = lower, 
+             ymax = upper, col = generation)) +
+  geom_point(position = position_dodge(0.5)) +
+  geom_pointrange(position = position_dodge(0.5)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  scale_color_manual(values = gen_cols) +
+  facet_wrap(~Country) +
+  theme_bw(base_family = "Fira Sans")
+```
+
+# References
