@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020/W32TeX) (preloaded format=xelatex 2021.3.21)  13 APR 2021 10:40
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020/W32TeX) (preloaded format=xelatex 2021.3.21)  14 APR 2021 12:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1348,6 +1348,33 @@ LaTeX Font Warning: Font shape `TU/RobotoCondensed(0)/l/n' undefined
 (Font)              using `TU/RobotoCondensed(0)/m/n' instead on input line 213
 .
 
+
+Overfull \hbox (5.40004pt too wide) in paragraph at lines 218--241
+\TU/RobotoCondensed(0)/m/n/10 The scholarly study of democratic erosion has lon
+g been reserved to those regimes
+ []
+
+
+Overfull \hbox (4.03229pt too wide) in paragraph at lines 242--257
+\TU/RobotoCondensed(0)/m/n/10 racy in Europe and North America. Although it is 
+noteworthy that most researchers
+ []
+
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
+(Font)              scaled to size 12.0pt on input line 259.
+Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+
+lnum;mapping=tex-text;" at 12.0pt
+ -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
+oto/RobotoCondensed-Bold.otf
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
+(Font)              scaled to size 10.0pt on input line 264.
+Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum
+;+lnum;mapping=tex-text;" at 10.0pt
+ -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
+oto/RobotoCondensed-Italic.otf
+[1
+
+]
 Requested font "[lmroman7-regular]:mapping=tex-text;" at 7.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/public/lm/
 lmroman7-regular.otf
@@ -1360,7 +1387,7 @@ Requested font "cmex7" at 7.0pt
 Requested font "cmex7" at 5.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts
 /cmextra/cmex7.tfm
-LaTeX Font Info:    Trying to load font information for U+msa on input line 228
+LaTeX Font Info:    Trying to load font information for U+msa on input line 303
 .
 (c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -1374,7 +1401,7 @@ Requested font "msam7" at 7.0pt
 Requested font "msam5" at 5.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts
 /symbols/msam5.tfm
-LaTeX Font Info:    Trying to load font information for U+msb on input line 228
+LaTeX Font Info:    Trying to load font information for U+msb on input line 303
 .
 (c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -1389,13 +1416,13 @@ Requested font "msbm5" at 5.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts
 /symbols/msbm5.tfm
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 7.0pt on input line 228.
+(Font)              scaled to size 7.0pt on input line 303.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
 m;+lnum;mapping=tex-text;" at 7.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
 oto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 8.0pt on input line 228.
+(Font)              scaled to size 8.0pt on input line 303.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
 m;+lnum;mapping=tex-text;" at 8.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
@@ -1443,42 +1470,19 @@ Requested font "cmr6" at 6.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr6.
 tfm
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 6.0pt on input line 228.
+(Font)              scaled to size 6.0pt on input line 303.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
 m;+lnum;mapping=tex-text;" at 6.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
 oto/RobotoCondensed-Regular.otf
 LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 228.
+(Font)              scaled to size 5.0pt on input line 303.
 Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
 m;+lnum;mapping=tex-text;" at 5.0pt
  -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
 oto/RobotoCondensed-Regular.otf
 
-Overfull \hbox (5.40004pt too wide) in paragraph at lines 218--242
-\TU/RobotoCondensed(0)/m/n/10 The scholarly study of democratic erosion has lon
-g been reserved to those regimes
- []
-
-
-LaTeX Warning: Marginpar on page 1 moved.
-
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/b/n' will be
-(Font)              scaled to size 12.0pt on input line 244.
-Requested font "[RobotoCondensed-Bold.otf]/OT:script=latn;language=dflt;+pnum;+
-lnum;mapping=tex-text;" at 12.0pt
- -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
-oto/RobotoCondensed-Bold.otf
-LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/it' will be
-(Font)              scaled to size 10.0pt on input line 249.
-Requested font "[RobotoCondensed-Italic.otf]/OT:script=latn;language=dflt;+pnum
-;+lnum;mapping=tex-text;" at 10.0pt
- -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
-oto/RobotoCondensed-Italic.otf
-[1
-
-]
-Overfull \hbox (6.87602pt too wide) in paragraph at lines 278--289
+Overfull \hbox (6.87602pt too wide) in paragraph at lines 293--304
 \TU/RobotoCondensed(0)/m/n/10 representative surveys, which facilitates compara
 tive analyses of attitudinal demo-
  []
@@ -1490,17 +1494,26 @@ LaTeX Warning: Marginpar on page 2 moved.
 LaTeX Warning: Marginpar on page 2 moved.
 
 
-Overfull \hbox (118.31004pt too wide) in alignment at lines 311--318
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
+set up.
+This message occurred on input line 336.
+
+[2]
+
+LaTeX Warning: Marginpar on page 3 moved.
+
+
+Overfull \hbox (98.39003pt too wide) in alignment at lines 337--344
  [] [] [] [] [] 
  []
 
 
-Overfull \hbox (118.31004pt too wide) in alignment at lines 318--323
+Overfull \hbox (98.39003pt too wide) in alignment at lines 344--349
  [] [] [] [] [] 
  []
 
 
-Overfull \hbox (118.31004pt too wide) in alignment at lines 323--329
+Overfull \hbox (98.39003pt too wide) in alignment at lines 349--355
  [] [] [] [] [] 
  []
 
@@ -1508,178 +1521,137 @@ File: 680_proposal_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (type
 pdf)
 <use 680_proposal_files/figure-latex/unnamed-chunk-3-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 332--333
+Underfull \hbox (badness 10000) in paragraph at lines 358--359
 
  []
 
 
-LaTeX Warning: Marginpar on page 2 moved.
+LaTeX Warning: Marginpar on page 3 moved.
+
+
+LaTeX Warning: Marginpar on page 3 moved.
 
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
 set up.
-This message occurred on input line 346.
-
-[2]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
-set up.
-This message occurred on input line 389.
+This message occurred on input line 400.
 
 [3]
-File: 680_proposal_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type 
-pdf)
-<use 680_proposal_files/figure-latex/unnamed-chunk-4-1.pdf>
+LaTeX Font Info:    Font shape `TU/RobotoCondensed(0)/m/n' will be
+(Font)              scaled to size 10.95pt on input line 413.
+Requested font "[RobotoCondensed-Regular.otf]/OT:script=latn;language=dflt;+pnu
+m;+lnum;mapping=tex-text;" at 10.95pt
+ -> c:/Users/olivi/AppData/Roaming/TinyTeX/texmf-dist/fonts/opentype/google/rob
+oto/RobotoCondensed-Regular.otf
 
-Underfull \hbox (badness 10000) in paragraph at lines 391--392
-
+Underfull \hbox (badness 1158) in paragraph at lines 450--450
+\TU/RobotoCondensed(0)/m/n/8 estimate objectively underspecified models,
  []
 
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
+set up.
+This message occurred on input line 466.
+
+[4]
+
+LaTeX Warning: Marginpar on page 5 moved.
+
+File: spec_curve.png Graphic file (type bmp)
+<spec_curve.png>
+
+Overfull \hbox (12.00664pt too wide) in paragraph at lines 467--468
+[][] 
+ []
+
+
+LaTeX Warning: Marginpar on page 5 moved.
+
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
+set up.
+This message occurred on input line 486.
+
+[5]
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
+set up.
+This message occurred on input line 544.
+
+[6]
 File: 680_proposal_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type 
 pdf)
 <use 680_proposal_files/figure-latex/unnamed-chunk-5-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 401--402
+Underfull \hbox (badness 10000) in paragraph at lines 546--547
 
  []
 
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
-set up.
-This message occurred on input line 404.
-
-[4]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
-set up.
-This message occurred on input line 404.
-
-[5]
 File: 680_proposal_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type 
 pdf)
 <use 680_proposal_files/figure-latex/unnamed-chunk-6-1.pdf>
 
-Underfull \hbox (badness 10000) in paragraph at lines 411--412
-[][]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 411--412
+Underfull \hbox (badness 10000) in paragraph at lines 550--551
 
  []
 
-File: 680_proposal_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type 
-pdf)
-<use 680_proposal_files/figure-latex/unnamed-chunk-7-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 415--416
-[][]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 415--416
-
- []
-
-File: 680_proposal_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type 
-pdf)
-<use 680_proposal_files/figure-latex/unnamed-chunk-8-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 419--420
-[][]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 419--420
-
- []
-
-
-Underfull \hbox (badness 1033) in paragraph at lines 420--420
-\TU/RobotoCondensed(0)/m/n/8 Figure 6: AMCEs for the undemocratic at-
- []
-
-
-Underfull \hbox (badness 2359) in paragraph at lines 420--420
-\TU/RobotoCondensed(0)/m/n/8 tribute relating to ignoring courts by gen-
- []
-
-
-Underfull \hbox (badness 1496) in paragraph at lines 420--420
-\TU/RobotoCondensed(0)/m/n/8 eration, country, and stated preference for
- []
-
-File: 680_proposal_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type 
-pdf)
-<use 680_proposal_files/figure-latex/unnamed-chunk-9-1.pdf>
-
-Underfull \hbox (badness 10000) in paragraph at lines 423--424
-[][]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 423--424
-
- []
-
-
-Underfull \hbox (badness 1097) in paragraph at lines 424--424
-\TU/RobotoCondensed(0)/m/n/8 Figure 7: AMCEs for the undemocratic at-
- []
-
-(./680_proposal.bbl
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
 set up.
-This message occurred on input line 49.
-
-[6]
-
-Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
-set up.
-This message occurred on input line 49.
+This message occurred on input line 553.
 
 [7]
-Underfull \hbox (badness 10000) in paragraph at lines 57--63
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
+set up.
+This message occurred on input line 553.
+
+[8] (./680_proposal.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 75--81
 []\TU/RobotoCondensed(0)/m/n/10 Schedler, A. and Sarsfield, R. (2007).  Democra
 ts with adjec-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 57--63
+Underfull \hbox (badness 10000) in paragraph at lines 75--81
 \TU/RobotoCondensed(0)/m/n/10 tives: Linking direct and indirect measures of de
 mocratic sup-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 57--63
+Underfull \hbox (badness 10000) in paragraph at lines 75--81
 \TU/RobotoCondensed(0)/m/n/10 port.  \TU/RobotoCondensed(0)/m/it/10 European Jo
 urnal of Political Research\TU/RobotoCondensed(0)/m/n/10 , 46(5):637–659.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 57--63
+Underfull \hbox (badness 10000) in paragraph at lines 75--81
 \TU/RobotoCondensed(0)/m/n/10 _eprint: https://ejpr.onlinelibrary.wiley.com/doi
 /pdf/10.1111/j.1475-
  []
 
-)
 
 Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
 set up.
-This message occurred on input line 431.
+This message occurred on input line 90.
 
-[8] (./680_proposal.aux)
+[9])
+
+Class tufte-handout Warning: Proper spacing of small-caps letters has not been 
+set up.
+This message occurred on input line 562.
+
+[10] (./680_proposal.aux)
 Package rerunfilecheck Info: File `680_proposal.out' has not changed.
-(rerunfilecheck)             Checksum: 86E1223A5C4F98EE7D717720399AB14D;837.
+(rerunfilecheck)             Checksum: 48D239A5BB942DA0426C82F6951D31BF;725.
  ) 
 Here is how much of TeX's memory you used:
- 15307 strings out of 478943
- 289404 string characters out of 5865754
- 687164 words of memory out of 5000000
- 34787 multiletter control sequences out of 15000+600000
- 408999 words of font info for 87 fonts, out of 8000000 for 9000
+ 15304 strings out of 478943
+ 288736 string characters out of 5865754
+ 688000 words of memory out of 5000000
+ 34785 multiletter control sequences out of 15000+600000
+ 409007 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 118i,11n,124p,656b,448s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 118i,11n,124p,656b,454s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on 680_proposal.pdf (8 pages).
+Output written on 680_proposal.pdf (10 pages).

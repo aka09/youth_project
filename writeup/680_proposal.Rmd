@@ -33,7 +33,9 @@ pacman::p_load(tidyverse,
                DescTools,
                knitr,
                viridis,
-               cregg)
+               cregg,
+               modelsummary,
+               magrittr)
 
 # Cleaned cumulative ESS data + wave 6
 load("cleaned_data/ess_clean.RData")
@@ -63,8 +65,10 @@ f2 <- selected ~ Gender + Age + `Political experience` + Party + `Economic aid p
 gen_cols <- c(viridis(6)[1:5], "#D53992")
 ```
 
-The scholarly study of democratic erosion  has long been reserved to those regimes that were considered most vulnerable -- the fledgling democracies whose institutions were weakly entrenched and whose peoples had not yet internalized the norms of popular government. In the past five years, however, the resilience of consolidated democracies has come under scrutiny [@levitsky_how_2018;@kaufman_democratic_2019]. In particular, Foa and Mounk's [-@foa_danger_2016] claim that younger generations are less attached to democracy and more open to authoritarian alternatives has attracted much attention.^[This generational pattern is especially worrying if it is due to cohort effects, as opposed to life-cycle effects.]  Indeed, there is a burgeoning literature examining generational patterns of support for democracy in Europe and North America. 
-Although it is noteworthy that most scholars strike a noticeably less pessimistic tone than Foa and Mounk [see e.g. @zilinsky_democratic_2019;@wuttke_have_2021], no single conclusion can claim universal support and the issue of youth support for democracy is still very much a contentious area of research. This research project aims to contribute to this literature by using original data from four surveys fielded in the United States and Canada in both 2019 and 2020. By using a combination of conjoint experiments and traditional vignette experiments, our aim is to provide a new look into an important question: are younger generations more acceptant of democratic backsliding? I begin with a short review of the key findings in this literature. 
+The scholarly study of democratic erosion  has long been reserved to those regimes that were considered most vulnerable -- the fledgling democracies whose institutions were weakly entrenched and whose peoples had not yet internalized the norms of popular government. In the past five years, however, the resilience of consolidated democracies has come under scrutiny [@levitsky_how_2018;@kaufman_democratic_2019]. In particular, Foa and Mounk's [-@foa_danger_2016] claim that younger generations are less attached to democracy and more open to authoritarian alternatives has attracted much attention.  Amid concern about the future of democracy, this question is of critical importance and deserves a comprehensive empirical examination. Is Western democracy sustainable if its youngest citizens are tempted by the allure of authoritarianism? A long tradition in political science would argue that it cannot: a regime becomes consolidated only once it has become "the only game in town" [@linz_toward_1996]. The most robust empirical evidence produced to date also supports this assessment [@claassen_mood_2020]. Declining rates of support for democracy among youth would be particularly worrying if due to cohort effects, as opposed to life-cycle effects. Indeed, cohort dynamics imply that despite the effects of aging, today's younger cohorts would never reach the level of support that the current oldest generations express. In the long-run, through intergenerational replacement, population-level suppor for democracy would therefore decrease.
+
+Recognizing the urgency of this research question, scholars have contributed to a burgeoning literature examining generational patterns of support for democracy in Europe and North America. 
+Although it is noteworthy that most researchers strike a noticeably less pessimistic tone than Foa and Mounk [see e.g. @zilinsky_democratic_2019;@wuttke_have_2021], no single conclusion can claim universal support and the issue of youth support for democracy is still very much a contentious area of research. This research project aims to contribute to this literature by using original data from four surveys fielded in the United States and Canada in both 2019 and 2020. By using a combination of conjoint experiments and traditional vignette experiments, our aim is to provide a new look into an important question: are younger generations more acceptant of democratic backsliding? I begin with a short review of the key findings in this literature. 
 
 # The literature so far
 
@@ -76,7 +80,7 @@ Foa and Mounk's original articles spurred a scholarly debate that is still ongoi
 
 Despite contradictory results, the extant literature shares a reliance on survey questions that directly query respondents about their attitudes toward various political regimes. Such questions are widely used in cross-country, nationally representative surveys, which facilitates comparative analyses of attitudinal democratic backsliding. However, there is reason to doubt that they are effective at measuring the latent construct of support for democracy. I highlight three reasons why this is.^[I do not discuss this for the purposes of this proposal, but there is also Zaller's "top-of-the-head" theory of the survey response that would call into question how meaningful the nominal measure of support for democracy are.] 
 
-First, although a handful of survey items are frequently used to measure support for democratic rule, \textit{which} of these popular items best measures the underlying concept remains unclear -- with important consequences on the conclusions that can be drawn. Notably, four survey items that are regularly used in studies of democratic backsliding are only weakly correlated (see Table 1).^[Three items ask whether the following types of political systems are good ways of governing the respondent's country: "Having a strong leader who does not have to bother with parliament and elections", "Having the army rule the country", and "Having a democratic political system". The fourth item asks participants to rate the importance of living in a democratic country on a scale from 1 to 10.] Thus, there is only a tenuous link between different survey instruments that have been used interchangeably as dependent variables in the literature. Which of these four items -- if any -- best captures regime support is unclear, but what \textit{is} clear is that basic issues of measurement have not been given sufficient attention. Furthermore, by producing age-specific correlations between the "democracy as a good way of governing the country" item and the three others, one can observe a weakening correlation among the younger cohorts (see Figure 1). 
+First, although a handful of survey items are frequently used to measure support for democratic rule, \textit{which} of these popular items best measures the underlying concept remains unclear -- with important consequences on the conclusions that can be drawn. Notably, four survey items that are regularly used in studies of democratic backsliding are only weakly correlated (see Table 1).^[Three items ask whether the following types of political systems are good ways of governing the respondent's country: "Having a strong leader who does not have to bother with parliament and elections", "Having the army rule the country", and "Having a democratic political system". The fourth item asks participants to rate the importance of living in a democratic country on a scale from 1 to 10.] Thus, there is only a tenuous link between different survey instruments that have been used interchangeably as dependent variables in the literature. Which of these four items -- if any -- best captures regime support is unclear, but what \textit{is} clear is that basic issues of measurement have not been given sufficient attention. Furthermore, by producing age-specific correlations between the "democracy as a good way of governing the country" item and the three others, one can observe weakening correlations among the younger cohorts for two of the three items (see Figure 1). For instance, lines fitted using local linear regression estimate that the correlation between the democracy and strong leader questions decreases from 0.25 for the oldest respondents to 0.15 for the youngest ones. In short, the most widely used measures of support for democracy are, at best, noisy signals -- and they appear even more noisy for younger survey respondents. Therefore, relying on these items to conduct analyses of generational patterns may yield faulty inferences. ^[Note that I am not arguing that these measures are useless or that they should be ignored. I am merely making the point that researchers should not assume that they are good measures of the underlying concept.]
 
 ```{r}
 # Correlation matrix
@@ -85,11 +89,11 @@ bruh <- evs5 %>%
   rename(`Strong leader` = sys1_strongleader,
          `Army rule` = sys2_army,
          `Democracy (good way)` = sys3_democracy,
-         `Importance of democracy` = dem_important) %>% 
+         `Democracy (important)` = dem_important) %>% 
   cor(use = "complete.obs") %>% 
   round(3) 
   knitr::kable(bruh,
-        caption = 'Correlation matrix between 3 items measuring regime support. Data from Wave 5 of the European Values Survey.')
+        caption = 'Correlation matrix between 4 items measuring regime support. Data from Wave 5 of the European Values Survey.')
 ```
 
 ```{r,fig.height=6,fig.width=10,fig.cap="Correlations between support for democracy as a good way of governing and: a) support for strong leader, b) support for army rule, and c) rating of importance in living in a democracy, by birth year. Data from Wave 5 of the European Values Survey. Point size represents sample size; data restricted to respondents born between 1945 and 2000."}
@@ -124,14 +128,38 @@ evs5 %>%
   guides(size = FALSE)
 ```
 
-Second, social desirability bias may produce a misleadingly optimistic picture of support for democracy. As social scientists have developed new methodological approaches in order to get around the problem of untruthfulness^[Perhaps most notably, list experiments have been used as a statistical "truth serum", see @glynn_what_2013 and @lyall_explaining_2013], research on support for democracy has mostly stuck with the same direct questions that may or may not elicit honest answers. Although problematic in its own right, this issue of sensitive survey questions may spell further trouble if the pressure to deliver the socially acceptable answer differs from generation to generation. 
+Second, social desirability bias may produce a misleadingly optimistic picture of support for democracy. As social scientists have developed new methodological approaches in order to get around the problem of untruthfulness^[Perhaps most notably, list experiments have been used as a statistical "truth serum", see @glynn_what_2013 and @lyall_explaining_2013], research on support for democracy has mostly stuck with the same direct questions that may or may not elicit honest answers. Although problematic in its own right, this issue of sensitive survey questions may spell further trouble if the pressure to deliver the socially acceptable answer differs from generation to generation. If this is the case, the observed differences in support for democracy across cohorts may be an artifact of differential rates of social desirability bias.^[There is, as far as I know, no robust evidence on this question in political science (though there seems to be relevant research in psychology). Nonetheless, seriously considering the possibility is, I believe, crucial to the research agenda on youth and democracy. Again, I would argue that the validity of survey instruments must be demonstrated, not assumed.]
 
 Third, expressing support for democracy in a survey is essentially costless. In fulfilling their democratic duties, citizens are never presented with a simple up-or-down vote on the continuation of democratic government. Instead, the respect of democratic norms is one of many considerations that must compete with, among others, ideology and partisanship. What matters most is not answers to abstract survey questions, but how citizens behave when they are asked to make trade-offs between policy preferences, partisan loyalty, and respect for democracy. If older generations hold intense preferences for certain policies or are less willing to cross party lines, the generational differences identified by the nominal measures may disappear. Real-world choices often involve a choice between an ideologically-proximate, but undemocratic candidate and an ideologically-distant who is respectful of democratic norms. Evaluating how citizens make these trade-offs is at the heart of the issue of democratic resilience; standard survey questions cannot provide any information about these trade-offs. As a result, these familiar items about regime types may identify as small-d democrats those respondents who defend democracy "in the abstract" but whose support crumbles due to the smallest inconvenience [@schedler_democrats_2007]. 
 
-# Contribution: new experimental evidence 
-Given these limitations, this research project aims to provide new evidence on youth and democracy by drawing on "behavioral" measures from survey experiments. 
+In sum, direct questions asking about respondents' views of different political regimes are one way of measuring individual-level commitment to democracy. It is, to be sure, a convenient way, but also an imperfect one -- for the reasons stated above. Consequently, this research project uses a two-pronged approach, which I describe below. 
 
-The first type of evidence that we present comes from conjoint experiments embedded in nationally representative surveys in Canada and the United States fielded in mid-2020. Preliminary results are presented in Figures 2 and 3, which show vote for an anti-democratic candidate for office under different scenarios of agreement or disagreement with the respondent on lockdown policy and party. These preliminary findings show little evidence of a generational pattern in voting for undemocratic candidates. Future steps include comparisons of average marginal component effects across generations. For the purposes of statistical power, we may also collapse some of the generational cohorts in order to arrive at more precise estimates. The data for the congruence scenarios are particularly sparse given that the conjoint experiment was not set up with this specific analysis in mind.
+# Contribution: sensitivity analyses and experimental measures
+
+## Specification curve analyses 
+
+In the first part of this research project, I will remain within the confines of the traditional measures of support for democracy and probe the robustness of the empirical relationship between generational cohort and support for democracy. A concern that has been raised multiple times regarding Foa and Mounk's findings is that they are dependent on unusual coding schemes that inflate the generational differences in support for democracy. For instance, Erik Voeten [-@voeten_are_2017] argues against Foa and Mounk's decision to dichotomize the importance of democracy scale, with respondents who answered anything other than the maximum 10 being coded as a single group. These arbitrary decisions, which are almost inevitable in academic research and over which researchers often have much flexibility, can be exploited in order to produce results that satisfy the researcher. This is the familiar "researcher degrees of freedom" problem that has plagued the social sciences and contributed to the replicability crisis [@simmons_false-positive_2011]. In regression analysis, the arbitrary decisions that researchers must make include: which covariates to control for, the assumed functional form of the relationship between the independent variables and the outcome, which observations to exclude, which type of model to use, whether to include any interaction terms...As the number of decisions -- and therefore the number of potential specifications -- approaches infinity, the probability of finding a statistically significant relationship between the main independent variable and the outcome of interest converges toward 1. 
+
+In order to assess the robustness of the link between age and support for democracy, I propose to use specification curve analysis, a modern and increasingly popular technique to battle the problem of false positives in the social sciences. The idea is to pre-specify a universe of "reasonable specifications" that contains all "valid and non-redudant" ways to model a relationship between some independent variable and some outcome variable [@simonsohn_specification_2020].^[Note the word "valid": the point is not to estimate objectively underspecified models, but rather to compare results from competing models that are perceived as "reasonable".] Once the data has been collected, the researcher can then systematically test all of these pre-specified models, plot the resulting point estimates from smallest to largest, and indicate the modeling choices that produced each point estimate. An example from Orben and Przybylski [-@orben_association_2019] is included below. For instance, in the case that interests us, arbitrary decisions must be made with regard to defining/measuring generation cohorts. Different reasonable specifications could be presented: birth cohorts as decade of birth, birth cohorts using some conventional thresholds -- such as 1945-1959 for baby-boomers --, or age as a numeric variable -- with or without a squared term. All of these choices may -- or may not -- impact the substantive conclusions drawn on youth and democracy. The choice of outcome variable may also exert some influence: if we consider the four different items on support for democracy described earlier and the four operationalizations of birth cohorts, we already have 16 potential specifications. 
+
+![](spec_curve.png)
+
+
+Given the concerns highlighted earlier about the validity of the direct measures of support for democracy, a robust relationship demonstrated by specification curve analysis would not definitively "prove" the existence of a worrying trend regarding youth and democracy. Still, it would help assuage concerns that have been expressed about the quality of the empirical work presented by Foa and Mounk. For this first section of the paper, I will use survey data collected in May 2020 in Canada and the United States (in collaboration with Profs. Dietlind Stolle and Elisabeth Gidengil).^[An interesting extension would be to use data from Wave 5 of the European Values Survey, a well-known dataset that has been used in previous studies of generational patterns of support for democracy.] Table 2 shows different reasonable operationalizations of key concepts, including variables both on the right-hand side and variables on the left-hand side. This simple, non-exhaustive table -- I will definitely expand it to account for more reasonable modeling choices -- implies that one could test as many as 160 models. 
+
+```{r}
+read.csv("writeup/operationalization.csv") %>% 
+  knitr::kable(caption = "Possible operationalizations of variables")
+```
+
+
+## Experimental evidence 
+
+Given the limitations of the direct measures of support for democracy, this research project also aims to provide new evidence on youth and democracy by drawing on "behavioral" measures from survey experiments. Our 
+
+The first type of evidence that we present comes from conjoint experiments embedded in nationally representative surveys in Canada and the United States fielded in May 2020. Preliminary results are presented in Figures 2 and 3, which show vote for an anti-democratic candidate for office under different scenarios of agreement or disagreement with the respondent on lockdown policy and party. These preliminary findings show little evidence of a generational pattern in voting for undemocratic candidates. Future steps include comparisons of average marginal component effects across generations. For the purposes of statistical power, we may also collapse some of the generational cohorts in order to arrive at more precise estimates. The data for the congruence scenarios are particularly sparse given that the conjoint experiment was not set up with this specific analysis in mind.
+
+The second type of evidence that we bring to bear are results from scenarios that ask respondents about concrete anti-democratic actions from incumbents that they must condone or denounce. By doing away with the more abstract formulations of the survey questions examined above, we hope to elicit more meaningful answers from respondents. 
 
 ```{r,fig.height=8,fig.width=7,fig.cap="Proportion of respondents voting for the undemocratic candidate in the conjoint experiment, according to different scenarios of agreement on lockdown measures. Data from the legislature condition, 2020 coronavirus survey."}
 
@@ -158,7 +186,7 @@ ggplot(leg_lockdown_gen,
   facet_wrap(~Country)
 ```
 
-The second type of evidence that we bring to bear are results from scenarios that ask respondents about concrete anti-democratic actions from incumbents that they must condone or denounce. By doing away with the more abstract formulations of the survey questions examined above, we hope to elicit more meaningful answers from respondents. 
+
 
 ```{r,fig.height=8,fig.width=7,fig.cap="Proportion of respondents voting for the undemocratic candidate in the conjoint experiment, according to different scenarios of party congruence between the respondent and the hypothetical candidates. Data from the legislature condition, 2020 coronavirus survey."}
 ### By generation----
@@ -188,55 +216,7 @@ ggplot(leg_party_gen,
 
 \newpage
 
-# Appendix: some interesting figures 
-
-```{r,fig.height=6,fig.width=8,fig.cap="Mean satisfaction with democracy by age, ESS combined waves 1-9. Age-specific scores are computed using a weighted mean with post-stratification weights; loess curve is weighted by sample size."}
-# Mean satisfaction by age (with loess)
-ess_cum %>% 
-  filter(age >= 15 & age <= 90) %>% 
-  filter(dem_satisfied < 11) %>% 
-  group_by(age) %>% 
-  summarise(mean_satisfied = weighted.mean(dem_satisfied, 
-                                           na.rm = T,
-                                           w = pspwght),
-            lwr = lwr_conf(dem_satisfied),
-            upr = upr_conf(dem_satisfied),
-            `Sample size` = n()) %>% 
-  ggplot(aes(x = age, y = mean_satisfied, weight = `Sample size`)) +
-  geom_point(aes(size = `Sample size`), alpha = 0.2) +
-  geom_smooth(se = FALSE) +
-  labs(x = "Age",
-       y = "Satisfaction with democracy (0-10)") +
-  scale_x_continuous(breaks = seq(15, 90, 5)) +
-  theme_bw(base_family = "Fira Sans",
-           base_size = 14) +
-  guides(size = FALSE)
-```
-
-```{r,fig.height=6,fig.width=8,fig.cap="Mean importance of democracy by age, ESS wave 6 only (2012). Age-specific scores are computed using a weighted mean with post-stratification weights; loess curve is weighted by sample size."}
-# Mean importance by age (with loess)
-ess6 %>% 
-  filter(age >= 15 & age <= 90) %>% 
-  group_by(age) %>% 
-  summarise(mean_important = weighted.mean(dem_important, 
-                                           na.rm = T,
-                                           w = pspwght),
-            lwr = lwr_conf(dem_important),
-            upr = upr_conf(dem_important),
-            `Sample size` = n()) %>% 
-  ggplot(aes(x = age, y = mean_important, weight = `Sample size`)) +
-  geom_point(aes(size = `Sample size`), alpha = 0.2) +
-  geom_smooth(se = FALSE) +
-  labs(x = "Age",
-       y = "Importance of democracy (0-10)") +
-  scale_x_continuous(breaks = seq(15, 90, 5)) +
-  theme_bw(base_family = "Fira Sans",
-           base_size = 14) +
-  guides(size = FALSE)
-```
-
-
-```{r,fig.height=6,fig.width=8,fig.cap="AMCEs for the undemocratic attribute relating to ignoring courts by generation, country, and stated preference for democracy. Data from our 2020 surveys in Canada and the United States (courts condition)."}
+```{r,fig.height=5,fig.width=8,fig.cap="AMCEs for the undemocratic attribute relating to ignoring courts by generation, country, and stated preference for democracy. Data from our 2020 surveys in Canada and the United States (courts condition).", eval=FALSE}
 # Collapsing generations together for this analysis 
 conjoint_courts_pooled %>% 
   filter(!is.na(democracy_preferable)) %>% 
@@ -266,7 +246,7 @@ conjoint_courts_pooled %>%
   theme_bw(base_family = "Fira Sans")
 ```
 
-```{r,fig.height=6,fig.width=8,fig.cap="AMCEs for the undemocratic attribute relating to shutting down the legislature by generation, country, and stated preference for democracy. Data from our 2020 surveys in Canada and the United States (legislature condition)."}
+```{r,fig.height=5,fig.width=8,fig.cap="AMCEs for the undemocratic attribute relating to shutting down the legislature by generation, country, and stated preference for democracy. Data from our 2020 surveys in Canada and the United States (legislature condition).", eval=FALSE}
 
 # Collapsing generations together for this analysis 
 conjoint_legislature_pooled %>% 
@@ -296,5 +276,8 @@ conjoint_legislature_pooled %>%
   facet_wrap(~Country) +
   theme_bw(base_family = "Fira Sans")
 ```
+
+\newpage 
+
 
 # References

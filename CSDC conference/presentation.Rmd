@@ -1,0 +1,73 @@
+---
+title: "Youth and Democracy"
+subtitle: "Are young people more willing to accept democratic deconsolidation?"
+date: "April 22nd, 2021"
+author: "Olivier Bergeron-Boutin, Dietlind Stolle and Elisabeth Gidengil"
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{multirow}
+  - \usepackage{array}
+  - \usepackage{graphicx}
+  - \usepackage{enumerate}
+output: 
+  beamer_presentation:
+    theme: "metropolis"
+    latex_engine: xelatex
+classoption: t
+urlcolor: blue
+link-citations: yes
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_knit$set(
+  root.dir = rprojroot::find_rstudio_root_file()
+)
+```
+
+```{r}
+# Packages
+library(pacman)
+pacman::p_load(tidyverse,
+               haven,
+               ggplot2,
+               extrafont,
+               DescTools,
+               knitr,
+               viridis,
+               cregg,
+               modelsummary,
+               magrittr)
+
+# Cleaned cumulative ESS data + wave 6
+load("cleaned_data/ess_clean.RData")
+
+# Cleaned EVS wave 5 data
+load("cleaned_data/evs_w5.RData")
+
+# Survey data (2020) from both Canada and US 
+load("cleaned_data/survey_2020_pooled.RData")
+
+# Conjoint data (2020) from both Canada and US 
+load("cleaned_data/conjoint_2020_pooled.RData")
+
+# Loading function that produces scenario results
+source("2020 surveys/functions/conjoint_scenario.R")
+
+# Function for CIs
+source("functions/confint.R")
+
+# Formulas for conjoint
+f1 <- selected ~ Gender + Age + `Political experience` + Party + `Economic aid policy`+ 
+  `Lockdown policy` + `Legislative checks` 
+f2 <- selected ~ Gender + Age + `Political experience` + Party + `Economic aid policy`+ 
+  `Lockdown policy` + `Judicial checks` 
+
+# Custom color scale for results by generation
+gen_cols <- c(viridis(6)[1:5], "#D53992")
+```
+
+## An alarming picture
+
+Conventional measures of support for democracy paint an alarming picture 
