@@ -30,15 +30,21 @@ evs5 %<>%
 
 # Coding incorrect birth years + generations
 evs5 %<>% 
-  mutate(birth_year = ifelse(!(birth_year %in% 1937:2002), NA, birth_year),
-         generation = case_when(
-           birth_year >= 1937 & birth_year <= 1949 ~ "Pre-1950s",
-           birth_year >= 1950 & birth_year <= 1959 ~ "1950s",
-           birth_year >= 1960 & birth_year <= 1969 ~ "1960s",
-           birth_year >= 1970 & birth_year <= 1979 ~ "1970s",
-           birth_year >= 1980 & birth_year <= 1989 ~ "1980s",
-           birth_year >= 1990 & birth_year <= 2002 ~ "Post-1980s",
-         ))
+  mutate(
+    birth_year = ifelse(!(birth_year %in% 1937:2002), NA, birth_year),
+    generation = case_when(
+      birth_year >= 1937 & birth_year <= 1949 ~ "Pre-1950s",
+      birth_year >= 1950 & birth_year <= 1959 ~ "1950s",
+      birth_year >= 1960 & birth_year <= 1969 ~ "1960s",
+      birth_year >= 1970 & birth_year <= 1979 ~ "1970s",
+      birth_year >= 1980 & birth_year <= 1989 ~ "1980s",
+      birth_year >= 1990 & birth_year <= 2002 ~ "Post-1980s"),
+    # iso3 to country name
+    country_name = countrycode(country, 
+                               origin = "iso3n",
+                               destination = "country.name"),
+    strong_leader_dummy = ifelse(sys1_strongleader %in% c(1,2), 1, 0)
+  )
 
 save(evs5, file = "cleaned_data/evs_w5.RData")
 

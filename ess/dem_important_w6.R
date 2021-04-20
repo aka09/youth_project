@@ -3,105 +3,146 @@ library(haven)
 library(magrittr)
 library(ggplot2)
 library(extrafont)
-library(DescTools)
+library(gtools)
 library(janitor)
-
+library(viridis)
+library(DescTools)
+library(margins)
 source("functions/confint.R")
 
 # Data from 6th ESS wave
-ess6.orig <- read_dta("ess/data/ess_wave6.dta")
+load("cleaned_data/ess_clean.RData")
 
-# Renaming columns
-ess6 <- 
-  rename(ess6.orig,
-         dem_satisfied = stfdem,
-         dem_important = implvdm,
-         age = agea)
+# Custom color scale for results by generation
+gen_cols <- c(viridis(6)[1:5], "#D53992")
 
-# Recoding
-ess6 %<>% 
-  mutate(
-    generation = case_when(
-      age >= 18 & age < 25 ~ "18-24",
-      age >= 25 & age < 35 ~ "25-34",
-      age >= 35 & age < 45 ~ "35-44",
-      age >= 45 & age < 54 ~ "45-54",
-      age >= 55 & age < 65 ~ "55-64",
-      age >= 65 ~ "65+",
-    ),
-    dem_important_0 = ifelse(dem_important==0, 1, 0),
-    dem_important_10 = ifelse(dem_important==10, 1, 0)
-  )
+# Vector of country names we're interested in
+country_list <- c(
+  "Belgium", "Denmark", "Finland", "France", "Germany", "Iceland", 
+  "Ireland", "Italy", "Netherlands", "Norway", "Portugal", "Spain", 
+  "Sweden", "Switzerland", "United Kingdom"
+)
 
-# Saving data in the cleaned data folder 
-write_dta(data = ess6, path = "cleaned_data/ess6.dta")
+# Importance by age and country
+ess6 %>% 
+  filter(age >= 18 & age < 80 & country_name %in% country_list) %>% 
+  group_by(age, country_name) %>% 
+  summarise(mean_important = weighted.mean(dem_important, 
+                                           na.rm = T,
+                                           w = pspwght),
+            lwr = lwr_conf(dem_important),
+            upr = upr_conf(dem_important),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = age, y = mean_important, weight = `Sample size`)) +
+  geom_point(aes(size = `Sample size`), alpha = 0.2) +
+  geom_smooth(se = FALSE, col = "red") +
+  labs(x = "Age",
+       y = "Importance of democracy (0-10)",
+       caption = "Loess line weighted by sample size; data from ESS Wave 6") +
+  scale_x_continuous(breaks = seq(20, 80, 10)) +
+  theme_bw(base_family = "Fira Sans") +
+  facet_wrap(~country_name) +
+  guides(size = FALSE)
 
+ggsave("ess/figures/important~age+country.png", height = 10, width = 10)
+
+# Importance by birth cohort and country
+ess6 %>% 
+  filter(country_name %in% country_list &
+           !is.na(cohort)) %>% 
+  group_by(cohort, country_name) %>% 
+  summarise(mean_important = mean(dem_important, na.rm = T),
+            lwr = lwr_conf(dem_important),
+            upr = upr_conf(dem_important)) %>% 
+  ggplot(aes(x = cohort, y = mean_important, 
+             ymin = lwr, ymax = upr)) +
+  geom_point(size = 2.5) +
+  geom_pointrange() +
+  labs(x = "Birth cohort",
+       y = "Importance of democracy (0-10)",
+       caption = "Data from ESS Wave 6") +
+  scale_y_continuous(breaks = seq(7.5, 10, 0.5)) +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 13) +
+  facet_wrap(~country_name)
+
+ggsave("ess/figures/important~cohort+country.png", height = 10, width = 14)
+
+# Satisfaction by age and country
+ess6 %>% 
+  filter(age >= 18 & age < 80 & country_name %in% country_list) %>% 
+  group_by(age, country_name) %>% 
+  summarise(mean_satisfied = weighted.mean(dem_satisfied, 
+                                           na.rm = T,
+                                           w = pspwght),
+            lwr = lwr_conf(dem_satisfied),
+            upr = upr_conf(dem_satisfied),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = age, y = mean_satisfied, weight = `Sample size`)) +
+  geom_point(aes(size = `Sample size`), alpha = 0.2) +
+  geom_smooth(se = FALSE, col = "red") +
+  labs(x = "Age",
+       y = "Satisfaction democracy (0-10)",
+       caption = "Loess line weighted by sample size; data from ESS Wave 6") +
+  scale_x_continuous(breaks = seq(20, 80, 10)) +
+  theme_bw(base_family = "Fira Sans") +
+  facet_wrap(~country_name) +
+  guides(size = FALSE)
+
+ggsave("ess/figures/satisfaction~age+country.png", height = 10, width = 10)
+
+# Satisfaction by cohort and country
+ess6 %>% 
+  filter(country_name %in% country_list & !is.na(cohort)) %>% 
+  group_by(cohort, country_name) %>% 
+  summarise(mean_satisfied =mean(dem_satisfied, na.rm = T),
+            lwr = lwr_conf(dem_satisfied),
+            upr = upr_conf(dem_satisfied),
+            `Sample size` = n()) %>% 
+  ggplot(aes(x = cohort, y = mean_satisfied,
+             ymin = lwr, ymax = upr)) +
+  geom_point() +
+  geom_pointrange() +
+  labs(x = "Birth cohort",
+       y = "Satisfaction democracy (0-10)",
+       caption = "Loess line weighted by sample size; data from ESS Wave 6") +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 13) +
+  facet_wrap(~country_name)
+
+ggsave("ess/figures/satisfaction~cohort+country.png", height = 10, width = 14)
+
+
+# Importance by satisfaction and generation
+ess6 %>% 
+  filter(!is.na(cohort) & dem_satisfied <= 10 &
+           country_name %in% country_list) %>% 
+  mutate(satisfied_quart = quantcut(dem_satisfied)) %>% 
+  group_by(cohort, satisfied_quart) %>% 
+  summarise(mean_important = mean(dem_important, na.rm = T),
+            lwr = lwr_conf(dem_important),
+            upr = upr_conf(dem_important)) %>% 
+  ggplot(aes(x = satisfied_quart, y = mean_important, 
+             ymin = lwr, ymax = upr, col = cohort)) +
+  geom_point(position = position_dodge(0.75), size = 3) +
+  geom_pointrange(position = position_dodge(0.75)) +
+  scale_color_manual(values = gen_cols) +
+  scale_y_continuous(breaks = seq(7.25, 9.75, 0.25)) +
+  theme_minimal(base_family = "Fira Sans") +
+  labs(y = "Importance of democracy (0-10)",
+       x = "Satisfaction with democracy (0-10)")
+
+ggsave("ess/figures/importance~satisfied+gen.png", height = 7, width = 9)
+
+# Model: importance ~ satisfaction*generation
+m1 <- lm(dem_important ~ dem_satisfied*generation + country_name, 
+         data = filter(ess6, country_name %in% country_list))
+
+cplot(m1, "generation", what = "effect")
+
+# Proportion of 0s and 10s
 ess6 %>% 
   filter(!is.na(generation)) %>% 
+  mutate(dem0or1 = ifelse(dem_important %in% c(0,1,2), 1, 0)) %>% 
   group_by(generation) %>% 
-  summarize(cor = cor(dem.important, dem.satisfied, 
-                      use = "complete.obs"))
-
-# Mean importance by age (with loess)
-ess6 %>% 
-  filter(age < 90) %>% 
-  group_by(age) %>% 
-  summarise(mean.important = weighted.mean(dem.important, 
-                                           na.rm = T,
-                                           w = pspwght),
-            lwr = lwr_conf(dem.important),
-            upr = upr_conf(dem.important),
-            `Sample size` = n()) %>% 
-  ggplot(aes(x = age, y = mean.important, weight = `Sample size`)) +
-  geom_point(aes(size = `Sample size`), alpha = 0.2) +
-  geom_smooth(se = FALSE) +
-  labs(x = "Age",
-       y = "Importance of democracy (0-10)",
-       caption = "Loess line weighted by sample size") +
-  scale_x_continuous(breaks = seq(15, 90, 5)) +
-  theme_bw(base_family = "Fira Sans")
-
-# With CIs instead 
-ess6 %>% 
-  filter(age < 90) %>% 
-  group_by(age) %>% 
-  summarise(mean.important = weighted.mean(dem.important, 
-                                           na.rm = T,
-                                           w = pspwght),
-            lwr = lwr_conf(dem.important),
-            upr = upr_conf(dem.important),
-            `Sample size` = n()) %>% 
-  ggplot(aes(x = age, y = mean.important,
-             ymin = lwr, ymax = upr)) +
-  geom_point(aes(alpha = `Sample size`)) +
-  geom_pointrange(aes(alpha = `Sample size`)) +
-  geom_smooth() +
-  labs(x = "Age",
-       y = "Importance of democracy (0-10)",
-       caption = "Point transparency represents n") +
-  scale_x_continuous(breaks = seq(15, 90, 5)) +
-  theme_bw(base_family = "Fira Sans")
-
-# Proportion of 0s and 10s, by age
-ess6 %>% 
-  filter(age < 90) %>% 
-  group_by(age) %>% 
-  summarise(`Proportion of 0s` = weighted.mean(dem.important.0, 
-                                               na.rm = T,
-                                               weight = pspwght),
-            `Proportion of 10s` = weighted.mean(dem.important.10, 
-                                                na.rm = T,
-                                                weight = pspwght),
-            `Sample size` = n()) %>% 
-  pivot_longer(cols = c("Proportion of 0s", "Proportion of 10s"),
-               values_to = "proportion",
-               names_to = "type") %>% 
-  ggplot(aes(x = age, y = proportion, weight = `Sample size`)) +
-  geom_point(aes(size = `Sample size`), alpha = 0.2) +
-  geom_smooth() +
-  facet_wrap(~type, scales = "free_y") +
-  labs(x = "Age",
-       y = "Proportion not important at all (0)",
-       caption = "Point transparency represents n") +
-  scale_x_continuous(breaks = seq(20, 90, 10)) +
-  theme_bw(base_family = "Fira Sans")
+  summarise(mean(dem0or1,na.rm = T))
