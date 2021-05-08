@@ -1,6 +1,5 @@
 library(tidyverse)
 library(ggplot2)
-library(cregg)
 library(gtools)
 library(viridis)
 library(extrafont)
@@ -36,30 +35,26 @@ ggsave("2020 surveys/figures/imp~age.png", height = 7, width = 9)
 
 # Correlation between importance and strong leader
 survey_pooled %>% 
-  filter(!is.na(generation) & !is.na(importance_democracy)) %>% 
-  mutate(strong_leader = ifelse(strong_leader %in% c(0.66,1), 1, 0),
-         important_quart = quantcut(importance_democracy, q = 3)) %>%
-  group_by(Country, important_quart, generation) %>% 
+  filter(!is.na(generation) & importance_democracy == 10) %>% 
+  mutate(strong_leader = ifelse(strong_leader %in% c(0.66,1), 1, 0)) %>%
+  group_by(Country, generation) %>% 
   summarise(mean = mean(strong_leader, na.rm = T),
             lwr = lwr_conf(strong_leader),
             upr = upr_conf(strong_leader)) %>% 
   mutate(generation = factor(generation, 
                              levels = c("Pre-1950s", "1950s", "1960s",
-                                        "1970s", "1980s", "Post-1980s")),
-         important_quart = recode(important_quart,
-                                  "[0,8]" = "0 to 8",
-                                  "(8,10)" = "9")) %>% 
-  ggplot(aes(x = important_quart, y = mean, 
+                                        "1970s", "1980s", "Post-1980s"))) %>% 
+  ggplot(aes(x = Country, y = mean, 
              ymin = lwr, ymax = upr, col = generation)) +
   geom_point(position = position_dodge(0.5)) +
   geom_pointrange(position = position_dodge(0.5)) +
-  facet_wrap(~Country) +
   scale_y_continuous(breaks = seq(0.1, 0.6, 0.1)) +
-  scale_color_manual(values = gen_cols) +
-  theme_bw(base_family = "Fira Sans") %+replace%
-  theme(legend.position = "bottom") +
+  scale_color_manual(values = gen_cols,
+                     name = "Birth cohort") +
+  theme_bw(base_family = "Fira Sans",
+           base_size = 16) +
   labs(y = "Proportion endorsing strong leader",
-       x = "Stated importance of democracy",
-       caption = "Data from original 2020 survey")
+       x = "Country",
+       caption = "Only respondents who answered democracy is absolutely important (10); \n Data from original 2020 survey")
 
 ggsave("2020 surveys/figures/strong~important+country+gen.png", height = 6, width = 8)

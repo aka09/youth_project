@@ -38,6 +38,7 @@ ess6 <- read_dta(
 ess_cum %<>% 
   mutate(dem.satisfied.0 = ifelse(dem_satisfied==0, 1, 0),
          dem.satisfied.10 = ifelse(dem_satisfied==10, 1, 0),
+         dem_dissatisfied = 10 - dem_satisfied,
          age = ifelse(age > 114, NA, age), # NA for 123 and 999 values
   )
 
@@ -77,6 +78,7 @@ ess6 %<>%
                         "1970s", "1980s", "Post-1980s")),
     dem_important_0 = ifelse(dem_important==0, 1, 0),
     dem_important_10 = ifelse(dem_important==10, 1, 0),
+    dem_dissatisfied = 10 - dem_satisfied,
     country_name = countrycode(country, "iso2c", "country.name")
   )
 
